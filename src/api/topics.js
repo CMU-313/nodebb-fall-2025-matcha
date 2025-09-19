@@ -147,10 +147,13 @@ topicsAPI.purge = async function (caller, data) {
 };
 
 topicsAPI.pin = async function (caller, { tids, expiry }) {
-	await doTopicAction('pin', 'event:topic_pinned', caller, { tids });
 
-	if (expiry) {
+	await doTopicAction('pin', 'event:topic_pinned', caller, { tids });
+	
+	// expiry is the timestamp that the "pinned" status will disappear.
+	if (expiry) { // If "expiry" is not NULL
 		await Promise.all(tids.map(async tid => topics.tools.setPinExpiry(tid, expiry, caller.uid)));
+
 	}
 };
 
