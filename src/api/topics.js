@@ -147,7 +147,7 @@ topicsAPI.purge = async function (caller, data) {
 };
 
 topicsAPI.pin = async function (caller, { tids, expiry }) {
-
+	console.log("topicsAPI.pin\n");
 	await doTopicAction('pin', 'event:topic_pinned', caller, { tids });
 	
 	// expiry is the timestamp that the "pinned" status will disappear.
