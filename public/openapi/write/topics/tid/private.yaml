@@ -1,0 +1,52 @@
+put:
+  tags:
+    - topics
+  summary: make a topic private
+  description: This operation makes a topic private.
+  parameters:
+    - in: path
+      name: tid
+      schema:
+        type: string
+      required: true
+      description: a valid topic id
+      example: 1
+  responses:
+    '200':
+      description: Topic successfully made private.
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              status:
+                $ref: ../../../components/schemas/Status.yaml#/Status
+              response:
+                type: object
+                properties: {}
+delete:
+  tags:
+    - topics
+  summary: make a topic public (unprivate)
+  description: This operation makes a private topic public.
+  parameters:
+    - in: path
+      name: tid
+      schema:
+        type: string
+      required: true
+      description: a valid topic id
+      example: 1
+  responses:
+    '200':
+      description: Topic successfully made public
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              status:
+                $ref: ../../../components/schemas/Status.yaml#/Status
+              response:
+                type: object
+                properties: {}
