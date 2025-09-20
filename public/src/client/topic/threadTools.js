@@ -51,11 +51,21 @@ define('forum/topic/threadTools', [
 			return false;
 		});
 
+		topicContainer.on('click', '[component="topic/private"]', function () {
+			topicCommand('put', '/private', 'private');
+			return false;
+		});
+
+		topicContainer.on('click', '[component="topic/unprivate"]', function () {
+			topicCommand('del', '/private', 'unprivate');
+			return false;
+		});
+
 		topicContainer.on('click', '[component="topic/pin"]', function () {
 			topicCommand('put', '/pin', 'pin');
 			return false;
 		});
-
+  
 		topicContainer.on('click', '[component="topic/unpin"]', function () {
 			topicCommand('del', '/pin', 'unpin');
 			return false;
@@ -361,6 +371,21 @@ define('forum/topic/threadTools', [
 
 		threadEl.toggleClass('deleted', data.isDelete);
 		ajaxify.data.deleted = data.isDelete ? 1 : 0;
+
+		posts.addTopicEvents(data.events);
+	};
+
+	ThreadTools.setPrivateState = function (data) {
+		const threadEl = components.get('topic');
+		if (String(data.tid) !== threadEl.attr('data-tid')) {
+			return;
+		}
+		
+		components.get('topic/private').toggleClass('hidden', data.isPrivate).parent().attr('hidden', data.isPrivate ? '' : null);
+		components.get('topic/unprivate').toggleClass('hidden', !data.isPrivate).parent().attr('hidden', !data.isPrivate ? '' : null);
+		const icon = $('[component="topic/labels"] [component="topic/private"]');
+		icon.toggleClass('hidden', !data.isPrivate);
+		ajaxify.data.private = data.isPrivate;
 
 		posts.addTopicEvents(data.events);
 	};
