@@ -146,6 +146,16 @@ topicsAPI.purge = async function (caller, data) {
 	});
 };
 
+topicsAPI.private = async function (caller, { tids }) {
+	await doTopicAction('private', 'event:topic_private', caller, { tids });
+};
+
+topicsAPI.unprivate = async function (caller, { tids }) {
+	await doTopicAction('unprivate', 'event:topic_unprivate', caller, { tids });
+};
+
+
+// here could be when we pin a post
 topicsAPI.pin = async function (caller, { tids, expiry }) {
 	console.log("topicsAPI.pin\n");
 	await doTopicAction('pin', 'event:topic_pinned', caller, { tids });

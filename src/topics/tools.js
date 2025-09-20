@@ -149,7 +149,67 @@ module.exports = function (Topics) {
 		return tids.filter(Boolean);
 	};
 
+	topicTools.private = async function (tid, uid) {
+		return await togglePrivate(tid, uid, true);
+	};
+
+	topicTools.unprivate = async function (tid, uid) {
+		return await togglePrivate(tid, uid, false);
+	};
+
+	async function togglePrivate(tid, uid, isPrivate) {
+		console.log('toggling private here');
+		const topicData = await Topics.getTopicData(tid);
+		if (!topicData) {
+			throw new Error('[[error:no-topic]]');
+		}
+
+		if (uid !== 'system') {
+			const canPrivate = await privileges.topics.canPrivate(tid, uid);
+			if (!canPrivate) {
+				throw new Error('[[error:no-privileges]]');
+			}
+		}
+
+		const promises = [
+			Topics.setTopicField(tid, 'private', isPrivate ? 1 : 0),
+			Topics.events.log(tid, { type: isPrivate ? 'private' : 'unprivate', uid }),
+		];
+
+		if (isPrivate) {
+			promises.push(db.sortedSetAdd(`cid:${topicData.cid}:tids:private`, Date.now(), tid));
+			promises.push(db.sortedSetsRemove([
+				`cid:${topicData.cid}:tids`,
+				`cid:${topicData.cid}:tids:create`,
+				`cid:${topicData.cid}:tids:posts`,
+				`cid:${topicData.cid}:tids:votes`,
+				`cid:${topicData.cid}:tids:views`,
+			], tid));
+		} else {
+			promises.push(db.sortedSetRemove(`cid:${topicData.cid}:tids:private`, tid));
+			promises.push(db.sortedSetAddBulk([
+				[`cid:${topicData.cid}:tids`, topicData.lastposttime, tid],
+				[`cid:${topicData.cid}:tids:create`, topicData.timestamp, tid],
+				[`cid:${topicData.cid}:tids:posts`, topicData.postcount, tid],
+				[`cid:${topicData.cid}:tids:votes`, parseInt(topicData.votes, 10) || 0, tid],
+				[`cid:${topicData.cid}:tids:views`, topicData.viewcount, tid],
+			]));
+		}
+
+		const results = await Promise.all(promises);
+
+		topicData.isPrivate = isPrivate; // deprecate in v2.0
+		topicData.private = isPrivate;
+		topicData.events = results[1];
+
+		plugins.hooks.fire('action:topic.private', { topic: _.clone(topicData), uid });
+
+		return topicData;
+	}
+
+	// this is the interaction with the database
 	async function togglePin(tid, uid, pin) {
+		console.log('toggling pin here');
 		const topicData = await Topics.getTopicData(tid);
 		if (!topicData) {
 			throw new Error('[[error:no-topic]]');
