@@ -5,6 +5,7 @@ const _ = require('lodash');
 const db = require('../database');
 const user = require('../user');
 const categories = require('../categories');
+const topics = require('../topics');
 const messaging = require('../messaging');
 const privileges = require('../privileges');
 const meta = require('../meta');
@@ -58,6 +59,21 @@ searchApi.categories = async (caller, data) => {
 	});
 
 	return { categories: result.categories };
+};
+
+searchApi.topics = async (caller, data) => {
+	const searchData = {
+		query: data.query || data.search,
+		uid: caller.uid,
+		cid: data.cid,
+		page: data.page || 1,
+		resultsPerPage: data.resultsPerPage || 20,
+		paginate: data.hasOwnProperty('paginate') ? data.paginate : true,
+		hardCap: data.hardCap || 500,
+	};
+
+	const result = await topics.searchTopics(searchData);
+	return result;
 };
 
 async function findMatchedCids(uid, data) {
