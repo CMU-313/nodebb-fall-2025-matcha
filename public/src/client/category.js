@@ -7,11 +7,12 @@ define('forum/category', [
 	'topicList',
 	'sort',
 	'categorySelector',
+	'topicSearchSimple',
 	'hooks',
 	'alerts',
 	'api',
 	'clipboard',
-], function (infinitescroll, share, navigator, topicList, sort, categorySelector, hooks, alerts, api, clipboard) {
+], function (infinitescroll, share, navigator, topicList, sort, categorySelector, topicSearchSimple, hooks, alerts, api, clipboard) {
 	const Category = {};
 
 	$(window).on('action:ajaxify.start', function (ev, data) {
@@ -26,6 +27,11 @@ define('forum/category', [
 		app.enterRoom('category_' + cid);
 
 		topicList.init('category', loadTopicsAfter);
+
+		// Initialize topic search
+		topicSearchSimple.init({
+			cid: cid,
+		});
 
 		sort.handleSort('categoryTopicSort', 'category/' + ajaxify.data.slug);
 
