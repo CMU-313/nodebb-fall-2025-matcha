@@ -174,6 +174,10 @@ privsTopics.canEdit = async function (tid, uid) {
 	return await privsTopics.isOwnerOrAdminOrMod(tid, uid);
 };
 
+privsTopics.canPrivate = async function (tid, uid) {
+	return await privsTopics.isOwnerOrAdminOrMod(tid, uid);
+};
+
 privsTopics.isOwnerOrAdminOrMod = async function (tid, uid) {
 	const [isOwner, isAdminOrMod] = await Promise.all([
 		topics.isOwner(tid, uid),
