@@ -155,7 +155,16 @@ Topics.getTopicsByTids = async function (tids, options) {
 
 	const filteredTopics = result.topics.filter(topic => topic && topic.category && !topic.category.disabled);
 
-	const hookResult = await plugins.hooks.fire('filter:topics.get', { topics: filteredTopics, uid: uid });
+
+	// MKWEE ISSUE #12: FILTER OUT PRIVATE POSTS
+	const isAdmin = await user.isAdministrator(uid);
+	const finalTopics = filteredTopics.filter((topic) => {
+		return !topic.private || isAdmin || topic.isOwner;
+	});
+
+	const hookResult = await plugins.hooks.fire('filter:topics.get', { topics: finalTopics, uid: uid });
+	// END MKWEE ISSUE #12
+
 	return hookResult.topics;
 };
 
