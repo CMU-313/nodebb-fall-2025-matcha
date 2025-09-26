@@ -3,7 +3,6 @@
 		<div class="d-flex flex-row p-2 text-bg-light gap-1 border rounded w-100">
 			<div component="category/controls" class="d-flex me-auto mb-0 gap-2 flex-wrap">
 				{{{ if (template.category || template.world) }}}
-				<!-- IMPORT partials/topic-search-simple.tpl -->
 				<!-- IMPORT partials/category/watch.tpl -->
 				<!-- IMPORT partials/tags/filter-dropdown-left.tpl -->
 				<!-- IMPORT partials/category/sort.tpl -->
@@ -12,7 +11,6 @@
 				<!-- IMPORT partials/topic-terms.tpl -->
 				{{{ end }}}
 				{{{ if (template.unread || (template.recent || (template.popular || template.top))) }}}
-				<!-- IMPORT partials/topic-search-simple.tpl -->
 				<!-- IMPORT partials/topic-filters.tpl -->
 				<!-- IMPORT partials/category/filter-dropdown-left.tpl -->
 				<!-- IMPORT partials/tags/filter-dropdown-left.tpl -->
@@ -36,6 +34,16 @@
 					<i class="fa fa-fw fa-arrow-up"></i> [[recent:load-new-posts]]
 				</a>
 			</div>
+
+			<!-- Search bar in the middle -->
+			{{{ if config.searchEnabled }}}
+			<div component="topic-search" class="input-group mx-2" style="width: 200px;">
+				<input component="topic-search-input" type="text" class="form-control form-control-sm" placeholder="Search topics..." autocomplete="off">
+				<button component="topic-search-button" class="btn btn-primary btn-sm" type="button" aria-label="[[global:search-topics]]">
+					<i class="fa fa-search"></i>
+				</button>
+			</div>
+			{{{ end }}}
 
 			<div class="d-flex gap-1 align-items-center">
 				{{{ if (template.category || template.world) }}}

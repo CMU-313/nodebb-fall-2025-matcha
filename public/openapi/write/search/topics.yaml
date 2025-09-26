@@ -1,0 +1,86 @@
+get:
+  tags:
+    - search
+  summary: search topics by keyword
+  description: |
+    This operation returns a set of topics matching the keyword search.
+
+    Topics are searched by title and can be filtered by category.
+  parameters:
+    - in: query
+      name: 'query'
+      schema:
+        type: string
+      required: false
+      description: The keyword used in the topic search (searched against topic titles)
+      example: 'javascript tutorial'
+    - in: query
+      name: 'search'
+      schema:
+        type: string
+      required: false
+      description: Alternative parameter name for the search keyword (equivalent to 'query')
+      example: 'javascript tutorial'
+    - in: query
+      name: 'cid'
+      schema:
+        type: number
+      required: false
+      description: Category ID to filter topics by category
+      example: 1
+    - in: query
+      name: 'page'
+      schema:
+        type: number
+      required: false
+      description: Page number for pagination (defaults to 1)
+      example: 1
+    - in: query
+      name: 'resultsPerPage'
+      schema:
+        type: number
+      required: false
+      description: Number of results per page (defaults to 20)
+      example: 20
+    - in: query
+      name: 'paginate'
+      schema:
+        type: boolean
+      required: false
+      description: Whether to paginate results (defaults to true)
+      example: true
+    - in: query
+      name: 'hardCap'
+      schema:
+        type: number
+      required: false
+      description: Maximum number of results to return (defaults to 500)
+      example: 500
+  responses:
+    '200':
+      description: matching topics successfully retrieved
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              status:
+                $ref: ../../components/schemas/Status.yaml#/Status
+              response:
+                type: object
+                properties:
+                  topics:
+                    type: array
+                    items:
+                      $ref: ../../components/schemas/TopicObject.yaml#/TopicObject
+                    description: Array of topic objects matching the search criteria
+                  matchCount:
+                    type: number
+                    description: Total number of topics matching the search criteria
+                  pageCount:
+                    type: number
+                    description: Total number of pages (only present when paginate is true)
+                  timing:
+                    type: string
+                    description: Search execution time in seconds
+                    example: "0.15"
