@@ -1,11 +1,8 @@
 'use strict';
 
-const _ = require('lodash');
-
 const db = require('../database');
 const privileges = require('../privileges');
 const plugins = require('../plugins');
-const utils = require('../utils');
 
 module.exports = function (Topics) {
 	Topics.searchTopics = async function (data) {

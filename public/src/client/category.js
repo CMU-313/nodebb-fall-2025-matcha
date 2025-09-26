@@ -12,7 +12,9 @@ define('forum/category', [
 	'alerts',
 	'api',
 	'clipboard',
-], function (infinitescroll, share, navigator, topicList, sort, categorySelector, topicSearchSimple, hooks, alerts, api, clipboard) {
+], function (
+	infinitescroll, share, navigator, topicList, sort, categorySelector, topicSearchSimple, hooks, alerts, api, clipboard
+) {
 	const Category = {};
 
 	$(window).on('action:ajaxify.start', function (ev, data) {
