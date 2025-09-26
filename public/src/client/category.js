@@ -159,7 +159,7 @@ define('forum/category', [
 		console.log('addPrivateBadgesToTopics called');
 
 		// Add private badge to ALL topics for demo purposes
-		$('[component="category/topic"]').each(function() {
+		$('[component="category/topic"]').each(function () {
 			const topicEl = $(this);
 			const labelsContainer = topicEl.find('[component="topic/labels"]');
 
@@ -174,7 +174,7 @@ define('forum/category', [
 		});
 
 		// Also try adding to any visible watching badges
-		$('[component="topic/watched"]:visible').each(function() {
+		$('[component="topic/watched"]:visible').each(function () {
 			const watchedEl = $(this);
 			if (!watchedEl.siblings('.private-badge').length) {
 				const privateBadge = $('<span class="badge border border-gray-300 text-body private-badge ms-1"><i class="fa fa-lock"></i> Private</span>');

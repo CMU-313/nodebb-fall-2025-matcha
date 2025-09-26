@@ -98,37 +98,37 @@ exports.post = async function (req, res) {
 	//Private toggle attempt
 
 	// postContainer.find('#private-toggle').on('change', function () {
-	// 	composer.posts[post_uuid].isPrivate = this.checked;
+	// composer.posts[post_uuid].isPrivate = this.checked;
 	//   });
 
 	// if (action === 'topics.post') {
-	// 	composerData = {
-	// 	  ...composerData,
-	// 	  handle: handleEl ? handleEl.val() : undefined,
-	// 	  title: titleEl.val(),
-	// 	  content: bodyEl.val(),
-	// 	  thumb: thumbEl.val() || '',
-	// 	  cid: categoryList.getSelectedCid(),
-	// 	  tags: tags.getTags(post_uuid),
-	// 	  timestamp: scheduler.getTimestamp(),
-	  
-	// 	  isPrivate: composer.posts[post_uuid].isPrivate || false,
-	// 	};
+	// composerData = {
+	//   ...composerData,
+	//   handle: handleEl ? handleEl.val() : undefined,
+	//   title: titleEl.val(),
+	//   content: bodyEl.val(),
+	//   thumb: thumbEl.val() || '',
+	//   cid: categoryList.getSelectedCid(),
+	//   tags: tags.getTags(post_uuid),
+	//   timestamp: scheduler.getTimestamp(),
+
+	//   isPrivate: composer.posts[post_uuid].isPrivate || false,
+	// };
 	//   }
 
 	// if (action === 'topics.post') {
-	// 	composerData = {
-	// 	  ...composerData,
-	// 	  handle: handleEl ? handleEl.val() : undefined,
-	// 	  title: titleEl.val(),
-	// 	  content: bodyEl.val(),
-	// 	  thumb: thumbEl.val() || '',
-	// 	  cid: categoryList.getSelectedCid(),
-	// 	  tags: tags.getTags(post_uuid),
-	// 	  timestamp: scheduler.getTimestamp(),
+	// composerData = {
+	//   ...composerData,
+	//   handle: handleEl ? handleEl.val() : undefined,
+	//   title: titleEl.val(),
+	//   content: bodyEl.val(),
+	//   thumb: thumbEl.val() || '',
+	//   cid: categoryList.getSelectedCid(),
+	//   tags: tags.getTags(post_uuid),
+	//   timestamp: scheduler.getTimestamp(),
 
-	// 	  isPrivate: composer.posts[post_uuid].isPrivate || false,
-	// 	};
+	//   isPrivate: composer.posts[post_uuid].isPrivate || false,
+	// };
 	//   }
 	  
 	  

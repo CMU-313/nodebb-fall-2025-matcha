@@ -91,7 +91,7 @@ define('forum/topic', [
 	//   <button class="composer-submit">Submit</button>
 	// </div>
 
-	// 	{{{ if topic.isPrivate }}}
+	// {{{ if topic.isPrivate }}}
 	// <span class="badge badge-warning">Private</span>
 	// {{{ end }}}
 
