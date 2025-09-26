@@ -49,6 +49,14 @@ Events._types = {
 		icon: 'fa-trash',
 		translation: async (event, language) => translateSimple(event, language, 'topic:user-deleted-topic'),
 	},
+	private: {
+		icon: 'fa-eye-slash',
+		translation: async (event, language) => translateSimple(event, language, 'topic:user-made-topic-private'),
+	},
+	unprivate: {
+		icon: 'fa-eye',
+		translation: async (event, language) => translateSimple(event, language, 'topic:user-made-topic-public'),
+	},
 	restore: {
 		icon: 'fa-trash-o',
 		translation: async (event, language) => translateSimple(event, language, 'topic:user-restored-topic'),
