@@ -128,7 +128,6 @@ define('forum/category/tools', [
 			});
 		});
 
-		// MKWEE BOOKMARK
 		CategoryTools.removeListeners();
 		socket.on('event:topic_deleted', setDeleteState);
 		socket.on('event:topic_restored', setDeleteState);
@@ -288,7 +287,6 @@ define('forum/category/tools', [
 	}
 
 	function setPinnedState(data) {
-		console.log('public/src/client/category/tools.js:setPinnedState\n');
 		const topic = getTopicEl(data.tid);
 		topic.toggleClass('pinned', data.isPinned);
 		topic.find('[component="topic/pinned"]').toggleClass('hidden', !data.isPinned);
