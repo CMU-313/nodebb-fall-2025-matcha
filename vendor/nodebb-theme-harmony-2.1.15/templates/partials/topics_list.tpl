@@ -28,6 +28,10 @@
 						<i class="fa fa-bell-o"></i>
 						<span>[[topic:watching]]</span>
 					</span>
+					<span class="badge border border-gray-300 text-body">
+						<i class="fa fa-lock"></i>
+						<span>Private</span>
+					</span>
 					<span component="topic/ignored" class="badge border border-gray-300 text-body {{{ if !./ignored }}}hidden{{{ end }}}">
 						<i class="fa fa-eye-slash"></i>
 						<span>[[topic:ignoring]]</span>
