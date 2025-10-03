@@ -224,4 +224,62 @@ describe('Search', () => {
 		assert.strictEqual(response.statusCode, 200);
 		await privileges.global.rescind(['groups:search:content'], 'guests');
 	});
+
+	describe('Topic search with post content', () => {
+		let testTopicData;
+		let testPostData;
+
+		before(async () => {
+			// Create a topic with a unique word in post content but not in title
+			({ topicData: testTopicData, postData: testPostData } = await topics.post({
+				uid: phoebeUid,
+				cid: cid1,
+				title: 'Simple Title Without Special Words',
+				content: 'This post contains the word ZEBRA which is unique',
+			}));
+
+			// Add a reply with another unique word
+			await topics.reply({
+				uid: gingerUid,
+				content: 'This reply contains XYLOPHONE as a test word',
+				tid: testTopicData.tid,
+			});
+		});
+
+		it('should find topics by searching post content (not just title)', async () => {
+			// Search for ZEBRA which is only in post content, not in title
+			const result = await topics.searchTopics({
+				query: 'ZEBRA',
+				uid: phoebeUid,
+				page: 1,
+			});
+
+			assert(result.topics.length > 0, 'Should find at least one topic');
+			assert(result.topics.some(t => t.tid === testTopicData.tid), 'Should find the topic with ZEBRA in content');
+		});
+
+		it('should find topics by searching reply content', async () => {
+			// Search for XYLOPHONE which is only in a reply
+			const result = await topics.searchTopics({
+				query: 'XYLOPHONE',
+				uid: phoebeUid,
+				page: 1,
+			});
+
+			assert(result.topics.length > 0, 'Should find at least one topic');
+			assert(result.topics.some(t => t.tid === testTopicData.tid), 'Should find the topic with XYLOPHONE in reply');
+		});
+
+		it('should still find topics by title', async () => {
+			// Verify title search still works
+			const result = await topics.searchTopics({
+				query: 'Simple',
+				uid: phoebeUid,
+				page: 1,
+			});
+
+			assert(result.topics.length > 0, 'Should find at least one topic');
+			assert(result.topics.some(t => t.tid === testTopicData.tid), 'Should find the topic by title');
+		});
+	});
 });
