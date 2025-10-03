@@ -72,18 +72,77 @@ module.exports = function (Topics) {
 			return [];
 		}
 
-		// Get topic titles for all topics
+		// Get topic titles and mainPid for all topics
 		const topicData = await db.getObjectsFields(
 			allTids.map(tid => `topic:${tid}`),
-			['title']
+			['title', 'mainPid']
 		);
 
-		// Filter topics where title contains the search query
+		// Search through topics: check both title and post content
 		const matchingTids = [];
+
+		// Batch process to improve performance
+		// First pass: check all titles (fast)
 		for (let i = 0; i < allTids.length && matchingTids.length < hardCap; i++) {
 			const topic = topicData[i];
+			const tid = parseInt(allTids[i], 10);
+
+			// Check if title matches
 			if (topic && topic.title && topic.title.toLowerCase().includes(query)) {
-				matchingTids.push(parseInt(allTids[i], 10));
+				matchingTids.push(tid);
+			}
+		}
+
+		// Second pass: check post content for all topics (including those matched by title)
+		// Get all post IDs for all topics in one batch query
+		const tidToPostsMap = {};
+		const allPostKeys = [];
+
+		for (let i = 0; i < allTids.length; i++) {
+			const tid = parseInt(allTids[i], 10);
+			const topic = topicData[i];
+
+			// Check all topics, not just non-matching ones
+			// (main post content might match even if title doesn't)
+
+			// Get post IDs for this topic (replies only, mainPid is separate)
+			const pids = await db.getSortedSetRange(`tid:${tid}:posts`, 0, -1);
+
+			// Include main post if it exists
+			const allPids = [];
+			if (topic && topic.mainPid) {
+				allPids.push(topic.mainPid);
+			}
+			if (pids && pids.length > 0) {
+				allPids.push(...pids);
+			}
+
+			if (allPids.length > 0) {
+				tidToPostsMap[tid] = allPids;
+				allPostKeys.push(...allPids.map(pid => `post:${pid}`));
+			}
+		}
+
+		// Fetch all post content in one batch query (more efficient)
+		if (allPostKeys.length > 0) {
+			const allPostsData = await db.getObjectsFields(allPostKeys, ['content']);
+
+			// Map posts back to their topics and check for matches
+			let postIndex = 0;
+			for (const tid of Object.keys(tidToPostsMap)) {
+				const numPosts = tidToPostsMap[tid].length;
+				const topicPosts = allPostsData.slice(postIndex, postIndex + numPosts);
+				postIndex += numPosts;
+
+				// Check if any post in this topic matches the query
+				const hasMatch = topicPosts.some(post =>
+					post && post.content && post.content.toLowerCase().includes(query)
+				);
+
+				// Only add if not already in list and under hardCap
+				if (hasMatch && !matchingTids.includes(parseInt(tid, 10)) && matchingTids.length < hardCap) {
+					matchingTids.push(parseInt(tid, 10));
+				}
 			}
 		}
 
