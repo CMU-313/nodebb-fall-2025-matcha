@@ -135,8 +135,8 @@ module.exports = function (Topics) {
 				postIndex += numPosts;
 
 				// Check if any post in this topic matches the query
-				const hasMatch = topicPosts.some(post =>
-					post && post.content && post.content.toLowerCase().includes(query)
+				const hasMatch = topicPosts.some(
+					post => post && post.content && post.content.toLowerCase().includes(query)
 				);
 
 				// Only add if not already in list and under hardCap
