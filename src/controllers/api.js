@@ -74,7 +74,7 @@ apiController.loadConfig = async function (req) {
 		topicPostSort: meta.config.topicPostSort || 'oldest_to_newest',
 		categoryTopicSort: meta.config.categoryTopicSort || 'recently_replied',
 		csrf_token: req.uid >= 0 ? generateToken(req) : false,
-		searchEnabled: plugins.hooks.hasListeners('filter:search.query'),
+		searchEnabled: true,
 		searchDefaultInQuick: meta.config.searchDefaultInQuick || 'titles',
 		bootswatchSkin: meta.config.bootswatchSkin || '',
 		'composer:showHelpTab': meta.config['composer:showHelpTab'] === 1,
