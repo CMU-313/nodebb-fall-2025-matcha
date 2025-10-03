@@ -12,6 +12,10 @@ const plugins = require('../plugins');
 const batch = require('../batch');
 const utils = require('../utils');
 
+// MKWEE ISSUE #12: FILTER OUT PRIVATE TOPICS - CATEGORY POSTS
+const user = require('../user');
+// END MKWEE ISSUE #12
+
 module.exports = function (Categories) {
 	Categories.getRecentReplies = async function (cid, uid, start, stop) {
 		// backwards compatibility, treat start as count
@@ -96,6 +100,18 @@ module.exports = function (Categories) {
 	};
 
 	async function getTopics(tids, uid) {
+
+		// MKWEE ISSUE #12: FILTER OUT PRIVATE TOPICS - CATEGORY POSTS
+
+		const isAdmin = await user.isAdministrator(uid);
+		// Find list of topics from tids
+		const topicList = await topics.getTopicsByTids(tids, uid);
+		// Filter out private topics if not admin
+		const filteredTids = isAdmin ? tids : topicList.filter(t => t && !t.private).map(t => t.tid);
+		tids = filteredTids;
+
+		// END MKWEE ISSUE #12
+
 		const topicData = await topics.getTopicsFields(
 			tids,
 			['tid', 'mainPid', 'slug', 'title', 'teaserPid', 'cid', 'postcount']
