@@ -5,14 +5,14 @@ get:
   description: |
     This operation returns a set of topics matching the keyword search.
 
-    Topics are searched by title and can be filtered by category.
+    Topics are searched by title and post content and can be filtered by category.
   parameters:
     - in: query
       name: 'query'
       schema:
         type: string
       required: false
-      description: The keyword used in the topic search (searched against topic titles)
+      description: The keyword used in the topic search (searched against topic titles and post content)
       example: 'javascript tutorial'
     - in: query
       name: 'search'
