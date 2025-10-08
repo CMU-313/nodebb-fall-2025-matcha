@@ -14,7 +14,9 @@
 <li {{{ if !pinned }}}hidden{{{ end }}}>
 	<a component="topic/unpin" href="#" class="dropdown-item rounded-1 d-flex align-items-center gap-2 {{{ if !pinned }}}hidden{{{ end }}}" role="menuitem"><i class="fa fa-fw fa-thumb-tack fa-rotate-90 text-secondary"></i> [[topic:thread-tools.unpin]]</a>
 </li>
+{{{ end }}}
 
+{{{ if privileges.canPrivate }}}
 <li {{{ if private }}}hidden{{{ end }}}>
 	<a component="topic/private" href="#" class="dropdown-item rounded-1 d-flex align-items-center gap-2 {{{ if private }}}hidden{{{ end }}}" role="menuitem"><i class="fa fa-fw fa-eye-slash text-secondary"></i> [[topic:thread-tools.private]]</a>
 </li>
@@ -22,6 +24,9 @@
 <li {{{ if !private }}}hidden{{{ end }}}>
 	<a component="topic/unprivate" href="#" class="dropdown-item rounded-1 d-flex align-items-center gap-2 {{{ if !private }}}hidden{{{ end }}}" role="menuitem"><i class="fa fa-fw fa-eye text-secondary"></i> [[topic:thread-tools.unprivate]]</a>
 </li>
+{{{ end }}}
+
+{{{ if privileges.editable }}}
 
 <li>
 	<a component="topic/move" href="#" class="dropdown-item rounded-1 d-flex align-items-center gap-2" role="menuitem"><i class="fa fa-fw fa-arrows text-secondary"></i> [[topic:thread-tools.move]]</a>
