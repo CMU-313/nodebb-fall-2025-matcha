@@ -288,6 +288,11 @@ define('forum/topic', [
 				return;
 			}
 
+			// Check if badge already exists anywhere on the page
+			if ($('.private-badge').length) {
+				return;
+			}
+
 			// Try multiple selectors to find the right place
 			let targetEl = $('.topic-info');
 			if (!targetEl.length) {
@@ -297,16 +302,14 @@ define('forum/topic', [
 				targetEl = $('.topic-title').parent().parent();
 			}
 
-			// Only add if badge doesn't already exist
-			if (targetEl.length && !targetEl.find('.private-badge').length) {
+			// Add the badge
+			if (targetEl.length) {
 				const privateBadge = $('<span class="badge badge-warning private-badge ms-2">Private</span>');
 				targetEl.append(privateBadge);
 			}
 		}
 
-		hooks.registerPage('action:posts.loaded', addPrivateBadgeToTopicInfo);
 		hooks.registerPage('action:topic.loaded', addPrivateBadgeToTopicInfo);
-		hooks.registerPage('action:posts.edited', addPrivateBadgeToTopicInfo);
 	}
 
 	function addParentHandler() {
