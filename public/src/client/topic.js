@@ -281,35 +281,6 @@ define('forum/topic', [
 		hooks.registerPage('action:posts.loaded', addCopyCodeButton);
 		hooks.registerPage('action:topic.loaded', addCopyCodeButton);
 		hooks.registerPage('action:posts.edited', addCopyCodeButton);
-
-		function addPrivateBadgeToTopicInfo() {
-			// Only add private badge if topic is actually marked as private
-			if (!ajaxify.data.private) {
-				return;
-			}
-
-			// Check if badge already exists anywhere on the page
-			if ($('.private-badge').length) {
-				return;
-			}
-
-			// Try multiple selectors to find the right place
-			let targetEl = $('.topic-info');
-			if (!targetEl.length) {
-				targetEl = $('[component="topic/title"]').parent();
-			}
-			if (!targetEl.length) {
-				targetEl = $('.topic-title').parent().parent();
-			}
-
-			// Add the badge
-			if (targetEl.length) {
-				const privateBadge = $('<span class="badge badge-warning private-badge ms-2">Private</span>');
-				targetEl.append(privateBadge);
-			}
-		}
-
-		hooks.registerPage('action:topic.loaded', addPrivateBadgeToTopicInfo);
 	}
 
 	function addParentHandler() {
