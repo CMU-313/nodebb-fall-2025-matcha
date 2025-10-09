@@ -8,6 +8,7 @@ const intFields = [
 	'uid', 'pid', 'tid', 'deleted', 'timestamp',
 	'upvotes', 'downvotes', 'deleterUid', 'edited',
 	'replies', 'bookmarks', 'announces',
+	'anonymous', // add anonymous flag as field to post
 ];
 
 module.exports = function (Posts) {
