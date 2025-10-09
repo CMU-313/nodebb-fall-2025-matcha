@@ -11,10 +11,14 @@ const websockets = require('../socket.io');
 const events = require('../events');
 
 exports.setDefaultPostData = function (reqOrSocket, data) {
+	// normalizes the payload before creation
 	data.uid = reqOrSocket.uid;
 	data.req = exports.buildReqObject(reqOrSocket, { ...data });
 	data.timestamp = Date.now();
 	data.fromQueue = false;
+	// dummy to test the anonymous flag
+	// data.anonymous = 1; // this successfully sets the anonymous flag to 1 and the frontend shows the name as Anonymous
+	// this means that the issue is that data is not passed in correctly if this dummy test succeeds
 };
 
 // creates a slimmed down version of the request object
