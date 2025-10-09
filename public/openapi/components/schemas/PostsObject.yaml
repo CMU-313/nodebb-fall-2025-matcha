@@ -12,5 +12,8 @@ PostsObject:
             description: A post identifier
           attachments:
             type: array
+          anonymous:
+            type: number
+            description: 1 if the post is authored anonymously
         required:
           - pid
