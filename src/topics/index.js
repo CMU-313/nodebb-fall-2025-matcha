@@ -120,7 +120,10 @@ Topics.getTopicsByTids = async function (tids, options) {
 			categoriesMap: _.zipObject(cids, categoriesData),
 			tidToGuestHandle: _.zipObject(guestTopics.map(t => t.tid), guestHandles),
 			thumbs,
-			tidToMainPostAnonymous: _.zipObject(topics.map(t => t.tid), mainPostsAnon.map(p => (p && parseInt(p.anonymous, 10) === 1))),
+			tidToMainPostAnonymous: _.zipObject(
+				topics.map(t => t.tid),
+				mainPostsAnon.map(p => (p && parseInt(p.anonymous, 10) === 1))
+			),
 		};
 	}
 
