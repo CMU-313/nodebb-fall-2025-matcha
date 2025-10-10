@@ -13,7 +13,7 @@ Feature 2: Anonymous Posts
 How to use: This feature allows a user to post anonymously. When creating a new topic, 
 there is a toggle that allows the user to make the post anonymous. When this is turned on, 
 after the user creates the topic, when viewing the post (in detailed and list views), 
-the creator's name shows up as as Anonymous and their profile picture is a default "A".
+the creator's name shows up as as Anonymous and their profile picture is a default "A". Additionally, the name and profile picture are not linked to the user's account unlike for non-anonymous users.
 
 How to user test: 
 Run new automated tests that run with npm run test (make sure these pass, details below)
@@ -25,6 +25,7 @@ redis-cli -h 127.0.0.1 -p 6379 HGET "post:1" "content"
 redis-cli -h 127.0.0.1 -p 6379 HGET "post:1" "anonymous” (queries the anonymous flag, should be 1 if true, 0 else)
 Check that in the list of topics (index), we see "A" as the profile picture rather than the first initial of the poster
 Check that when clicking into a topic (detailed), we see "A" as the profile picture rather than the first initial of the poster as well as "Anonymous" as the poster name rather than their actual name
+Check that the creator's profile picture and name should not be hyperlinked to their account if anonymous
 
 Link/description of where automated tests can be found:
 Backend: test/posts/anonymous.js
@@ -44,9 +45,10 @@ Frontend:
 - User can see "Anonymous" profile picture if post is anonymous
 - User sees regular profile picture if not anonymous
 - This works in both index and detailed view
+- Anonymous creator's profile picture and name should not be hyperlinked to their account if anonymous
 
 Why tests are sufficient for covering the changes made:
-The tests are sufficient because they cover the core functionalities that anonymous posting should have. This includes that a user can mark a post as anonymous, and upon doing so, the flag is correctly communicated from the front to backend and stored in the database (and persisted through change to that post). After this, the tests ensure that posts are displayed appropriately based on this value in the database (masked if anonymous), and that only anonymous posts are masked. It is also tested edge cases to ensure that anonymity applies to just a post itself and not the user who created the post. It both scenarios tests both that anonymous posts work correctly and non-anonymous posts aren't affected.
+The tests are sufficient because they cover the core functionalities that anonymous posting should have. This includes that a user can mark a post as anonymous, and upon doing so, the flag is correctly communicated from the front to backend and stored in the database (and persisted through change to that post). After this, the tests ensure that posts are displayed appropriately based on this value in the database (masked if anonymous), and that only anonymous posts are masked. It is also testing edge cases to ensure that anonymity applies to just a post itself and not the user who created the post. An anonymous creator's profile picture and name not being hyperlinked to their account is also tested for. It tests both scenarios that anonymous posts work correctly and non-anonymous posts aren't affected.
 
 
 Feature 3: Private Topics (Nicole and Matthew)
