@@ -4,6 +4,11 @@ const db = require('../database');
 const privileges = require('../privileges');
 const posts = require('../posts');
 
+// MKWEE ISSUE #12: FILTER OUT PRIVATE TOPICS - GROUP POSTS
+const user = require('../user');
+const topics = require('../topics');
+// END MKWEE ISSUE #12
+
 module.exports = function (Groups) {
 	Groups.onNewPostMade = async function (postData) {
 		if (!parseInt(postData.uid, 10) || postData.timestamp > Date.now()) {
@@ -43,6 +48,26 @@ module.exports = function (Groups) {
 		const cids = groupData.memberPostCidsArray;
 		const pids = await privileges.posts.filter('topics:read', allPids, uid);
 		const postData = await posts.getPostSummaryByPids(pids, uid, { stripTags: false });
-		return postData.filter(p => p && p.topic && (!cids.length || cids.includes(p.topic.cid)));
+
+		const postDataFiltered = postData.filter(p => p && p.topic && (!cids.length || cids.includes(p.topic.cid)));
+
+		//MKWEE ISSUE #12: FILTER OUT PRIVATE TOPICS - GROUP POSTS
+		const isAdmin = await user.isAdministrator(uid);
+
+		// For each post, find its topic
+		const tidList = postDataFiltered.map(p => (p && p.topic ? p.topic.tid : null)).filter(Boolean);
+		const topicList = await topics.getTopicsByTids(tidList, uid);
+
+		// Filter out posts that shouldn't be visible to the user
+		const finalPosts = postDataFiltered.filter((post) => {
+			const topic = topicList.find(t => t && post.topic && t.tid === post.topic.tid);
+			return topic && (!topic.private || isAdmin || topic.isOwner);
+		});
+
+		return finalPosts;
+
+		// END MKWEE ISSUE #12
+
+		
 	};
 };

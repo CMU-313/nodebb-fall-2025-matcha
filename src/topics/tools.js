@@ -158,7 +158,6 @@ module.exports = function (Topics) {
 	};
 
 	async function togglePrivate(tid, uid, isPrivate) {
-		console.log('toggling private here');
 		const topicData = await Topics.getTopicData(tid);
 		if (!topicData) {
 			throw new Error('[[error:no-topic]]');
@@ -209,7 +208,6 @@ module.exports = function (Topics) {
 
 	// this is the interaction with the database
 	async function togglePin(tid, uid, pin) {
-		console.log('toggling pin here');
 		const topicData = await Topics.getTopicData(tid);
 		if (!topicData) {
 			throw new Error('[[error:no-topic]]');

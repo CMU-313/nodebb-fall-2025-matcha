@@ -8,6 +8,10 @@ const user = require('../user');
 const privileges = require('../privileges');
 const plugins = require('../plugins');
 
+// MKWEE ISSUE #12: FILTER OUT PRIVATE TOPICS - USER POSTS
+const topics = require('../topics');
+// END MKWEE ISSUE #12
+
 const Posts = module.exports;
 
 require('./data')(Posts);
@@ -60,7 +64,22 @@ Posts.getPostSummariesFromSet = async function (set, uid, start, stop) {
 	let pids = await db.getSortedSetRevRange(set, start, stop);
 	pids = await privileges.posts.filter('topics:read', pids, uid);
 	const posts = await Posts.getPostSummaryByPids(pids, uid, { stripTags: false });
-	return { posts: posts, nextStart: stop + 1 };
+
+	// MKWEE ISSUE #12: FILTER OUT PRIVATE TOPICS - USER POSTS
+	const tidList = posts.map(p => (p && p.topic ? p.topic.tid : null)).filter(Boolean);
+	const topicList = await topics.getTopicsByTids(tidList, uid);
+
+	const isAdmin = await user.isAdministrator(uid);
+	const finalPosts = posts.filter((post) => {
+		const topic = topicList.find(t => t && post.topic && t.tid === post.topic.tid);
+		return topic && (!topic.private || isAdmin || topic.isOwner);
+	});
+
+	return { posts: finalPosts , nextStart: stop + 1 };
+
+	// END MKWEE ISSUE #12
+
+	
 };
 
 Posts.getPidIndex = async function (pid, tid, topicPostSort) {
