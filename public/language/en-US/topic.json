@@ -168,6 +168,7 @@
     "composer.title-placeholder": "Enter your topic title here...",
     "composer.handle-placeholder": "Enter your name/handle here",
     "composer.hide": "Hide",
+    "composer.make-anonymous": "Make Anonymous",
     "composer.discard": "Discard",
     "composer.submit": "Submit",
     "composer.additional-options": "Additional Options",

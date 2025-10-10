@@ -10,7 +10,8 @@
 {{{ end }}}
 <div class="d-flex align-items-start gap-3 post-container-parent">
 	<div class="bg-body d-none d-sm-block rounded-circle" style="outline: 2px solid var(--bs-body-bg);">
-		<a class="d-inline-block position-relative text-decoration-none" href="{{{ if ./user.userslug }}}{config.relative_path}/user/{./user.userslug}{{{ else }}}#{{{ end }}}" aria-label="[[aria:profile-page-for, {./user.displayname}]]">
+		{{{ if ./user.userslug }}}
+		<a class="d-inline-block position-relative text-decoration-none" href="{config.relative_path}/user/{./user.userslug}" aria-label="[[aria:profile-page-for, {./user.displayname}]]">
 			{buildAvatar(posts.user, "48px", true, "", "user/picture")}
 			{{{ if ./user.isLocal }}}
 			<span component="user/status" class="position-absolute top-100 start-100 border border-white border-2 rounded-circle status {posts.user.status}"><span class="visually-hidden">[[global:{posts.user.status}]]</span></span>
@@ -21,6 +22,11 @@
 			</span>
 			{{{ end }}}
 		</a>
+		{{{ else }}}
+		<div class="d-inline-block position-relative text-decoration-none">
+			{buildAvatar(posts.user, "48px", true, "", "user/picture")}
+		</div>
+		{{{ end }}}
 	</div>
 	<div class="post-container d-flex gap-2 flex-grow-1 flex-column w-100" style="min-width:0;">
 		<div class="d-flex align-items-start justify-content-between gap-1 flex-nowrap w-100 post-header" itemprop="author" itemscope itemtype="https://schema.org/Person">
@@ -30,7 +36,8 @@
 
 				<div class="d-flex flex-nowrap gap-1 align-items-center text-truncate">
 					<div class="bg-body d-sm-none">
-						<a class="d-inline-block position-relative text-decoration-none" href="{{{ if ./user.userslug }}}{config.relative_path}/user/{./user.userslug}{{{ else }}}#{{{ end }}}">
+						{{{ if ./user.userslug }}}
+						<a class="d-inline-block position-relative text-decoration-none" href="{config.relative_path}/user/{./user.userslug}">
 							{buildAvatar(posts.user, "20px", true, "", "user/picture")}
 							{{{ if ./user.isLocal }}}
 							<span component="user/status" class="position-absolute top-100 start-100 border border-white border-2 rounded-circle status {posts.user.status}"><span class="visually-hidden">[[global:{posts.user.status}]]</span></span>
@@ -41,9 +48,18 @@
 							</span>
 							{{{ end }}}
 						</a>
+						{{{ else }}}
+						<div class="d-inline-block position-relative text-decoration-none">
+							{buildAvatar(posts.user, "20px", true, "", "user/picture")}
+						</div>
+						{{{ end }}}
 					</div>
 
-					<a class="fw-bold text-nowrap text-truncate" href="{{{ if ./user.userslug }}}{config.relative_path}/user/{./user.userslug}{{{ else }}}#{{{ end }}}" data-username="{posts.user.username}" data-uid="{posts.user.uid}">{posts.user.displayname}</a>
+					{{{ if ./user.userslug }}}
+					<a class="fw-bold text-nowrap text-truncate" href="{config.relative_path}/user/{./user.userslug}" data-username="{posts.user.username}" data-uid="{posts.user.uid}">{posts.user.displayname}</a>
+					{{{ else }}}
+					<span class="fw-bold text-nowrap text-truncate" data-username="{posts.user.username}">{posts.user.displayname}</span>
+					{{{ end }}}
 				</div>
 
 				{{{ each posts.user.selectedGroups }}}

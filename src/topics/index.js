@@ -77,6 +77,7 @@ Topics.getTopicsByTids = async function (tids, options) {
 		const cids = _.uniq(topics
 			.map(t => t && t.cid && t.cid.toString()));
 		const guestTopics = topics.filter(t => t && t.uid === 0);
+		const mainPids = topics.map(t => t && t.mainPid);
 
 		async function loadGuestHandles() {
 			const mainPids = guestTopics.map(t => t.mainPid);
@@ -95,13 +96,14 @@ Topics.getTopicsByTids = async function (tids, options) {
 			return data;
 		}
 
-		const [teasers, users, userSettings, categoriesData, guestHandles, thumbs] = await Promise.all([
+		const [teasers, users, userSettings, categoriesData, guestHandles, thumbs, mainPostsAnon] = await Promise.all([
 			Topics.getTeasers(topics, options),
 			user.getUsersFields(uids, ['uid', 'username', 'fullname', 'userslug', 'reputation', 'postcount', 'picture', 'signature', 'banned', 'status']),
 			loadShowfullnameSettings(),
 			categories.getCategoriesFields(cids, ['cid', 'name', 'slug', 'icon', 'backgroundImage', 'imageClass', 'bgColor', 'color', 'disabled']),
 			loadGuestHandles(),
 			Topics.thumbs.load(topics),
+			posts.getPostsFields(mainPids, ['anonymous']),
 		]);
 
 		users.forEach((userObj, idx) => {
@@ -118,6 +120,10 @@ Topics.getTopicsByTids = async function (tids, options) {
 			categoriesMap: _.zipObject(cids, categoriesData),
 			tidToGuestHandle: _.zipObject(guestTopics.map(t => t.tid), guestHandles),
 			thumbs,
+			tidToMainPostAnonymous: _.zipObject(
+				topics.map(t => t.tid),
+				mainPostsAnon.map(p => (p && parseInt(p.anonymous, 10) === 1))
+			),
 		};
 	}
 
@@ -134,7 +140,16 @@ Topics.getTopicsByTids = async function (tids, options) {
 		if (topic) {
 			topic.thumbs = result.thumbs[i];
 			topic.category = result.categoriesMap[topic.cid];
-			topic.user = topic.uid ? result.usersMap[topic.uid] : { ...result.usersMap[topic.uid] };
+			topic.user = topic.uid ? { ...result.usersMap[topic.uid] } : { ...result.usersMap[topic.uid] };
+			if (result.tidToMainPostAnonymous[topic.tid]) {
+				topic.user = topic.user || {};
+				topic.user.username = 'Anonymous';
+				topic.user.displayname = 'Anonymous';
+				topic.user.userslug = undefined;
+				topic.user.picture = undefined;
+				topic.user['icon:text'] = 'A'; // Display "A" instead of user initial
+				topic.user['icon:bgColor'] = '#999999'; // Grey color for anonymous posts
+			}
 			if (result.tidToGuestHandle[topic.tid]) {
 				topic.user.username = validator.escape(result.tidToGuestHandle[topic.tid]);
 				topic.user.displayname = topic.user.username;
