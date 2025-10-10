@@ -140,7 +140,7 @@ Topics.getTopicsByTids = async function (tids, options) {
 		if (topic) {
 			topic.thumbs = result.thumbs[i];
 			topic.category = result.categoriesMap[topic.cid];
-			topic.user = topic.uid ? result.usersMap[topic.uid] : { ...result.usersMap[topic.uid] };
+			topic.user = topic.uid ? { ...result.usersMap[topic.uid] } : { ...result.usersMap[topic.uid] };
 			if (result.tidToMainPostAnonymous[topic.tid]) {
 				// If the main post is anonymous, mask topic user display
 				topic.user = topic.user || {};
