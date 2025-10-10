@@ -61,6 +61,9 @@ define('forum/category', [
 
 		new clipboard('[data-clipboard-text]');
 
+		// Add private badges to all topics with watching tags
+		addPrivateBadgesToTopics();
+
 		hooks.fire('action:topics.loaded', { topics: ajaxify.data.topics });
 		hooks.fire('action:category.loaded', { cid: ajaxify.data.cid });
 	};
@@ -157,6 +160,35 @@ define('forum/category', [
 		}, function (data, done) {
 			hooks.fire('action:topics.loaded', { topics: data.topics });
 			callback(data, done);
+		});
+	}
+
+	function addPrivateBadgesToTopics() {
+		console.log('addPrivateBadgesToTopics called');
+
+		// Add private badge to ALL topics for demo purposes
+		$('[component="category/topic"]').each(function () {
+			const topicEl = $(this);
+			const labelsContainer = topicEl.find('[component="topic/labels"]');
+
+			console.log('Processing topic, labels container found:', labelsContainer.length);
+
+			// Only add if badge doesn't already exist
+			if (labelsContainer.length && !labelsContainer.find('.private-badge').length) {
+				const privateBadge = $('<span class="badge border border-gray-300 text-body private-badge ms-1"><i class="fa fa-lock"></i> Private</span>');
+				labelsContainer.append(privateBadge);
+				console.log('Private badge added to topic');
+			}
+		});
+
+		// Also try adding to any visible watching badges
+		$('[component="topic/watched"]:visible').each(function () {
+			const watchedEl = $(this);
+			if (!watchedEl.siblings('.private-badge').length) {
+				const privateBadge = $('<span class="badge border border-gray-300 text-body private-badge ms-1"><i class="fa fa-lock"></i> Private</span>');
+				watchedEl.after(privateBadge);
+				console.log('Private badge added after watching badge');
+			}
 		});
 	}
 

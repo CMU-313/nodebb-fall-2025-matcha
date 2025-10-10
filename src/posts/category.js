@@ -43,4 +43,12 @@ module.exports = function (Posts) {
 		const isMembers = await db.isSortedSetMembers(`cid:${parseInt(cid, 10)}:pids`, pids);
 		return pids.filter((pid, index) => pid && isMembers[index]);
 	}
+
+	//<li class="topic-title">
+	//   <a href="{relative_path}/topic/{topics.slug}">{topics.title}</a>
+	//   {{{ if topics.isPrivate }}}
+	//     <span class="badge badge-warning">Private</span>
+	//   {{{ end }}}
+	// </li>
+
 };

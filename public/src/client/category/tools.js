@@ -128,12 +128,15 @@ define('forum/category/tools', [
 			});
 		});
 
+		// MKWEE BOOKMARK
 		CategoryTools.removeListeners();
 		socket.on('event:topic_deleted', setDeleteState);
 		socket.on('event:topic_restored', setDeleteState);
 		socket.on('event:topic_purged', onTopicPurged);
 		socket.on('event:topic_locked', setLockedState);
 		socket.on('event:topic_unlocked', setLockedState);
+		socket.on('event:topic_private', setPrivateState);
+		socket.on('event:topic_unprivate', setPrivateState);
 		socket.on('event:topic_pinned', setPinnedState);
 		socket.on('event:topic_unpinned', setPinnedState);
 		socket.on('event:topic_moved', onTopicMoved);
@@ -182,6 +185,8 @@ define('forum/category/tools', [
 		socket.removeListener('event:topic_unlocked', setLockedState);
 		socket.removeListener('event:topic_pinned', setPinnedState);
 		socket.removeListener('event:topic_unpinned', setPinnedState);
+		socket.removeListener('event:topic_private', setPrivateState);
+		socket.removeListener('event:topic_unprivate', setPrivateState);
 		socket.removeListener('event:topic_moved', onTopicMoved);
 	};
 
@@ -253,6 +258,10 @@ define('forum/category/tools', [
 		return getTopicEl(tid).hasClass('locked');
 	}
 
+	// function isTopicPrivate(tid) {
+	// return getTopicEl(tid).hasClass('private');
+	// }
+
 	function isTopicPinned(tid) {
 		return getTopicEl(tid).hasClass('pinned');
 	}
@@ -271,7 +280,15 @@ define('forum/category/tools', [
 		topic.find('[component="topic/locked"]').toggleClass('hidden', !data.isDeleted);
 	}
 
+	function setPrivateState(data) {
+		const topic = getTopicEl(data.tid);
+		topic.toggleClass('private', data.isPrivate);
+		topic.find('[component="topic/private"]').toggleClass('hidden', !data.isPrivate);
+		ajaxify.refresh();
+	}
+
 	function setPinnedState(data) {
+		console.log('public/src/client/category/tools.js:setPinnedState\n');
 		const topic = getTopicEl(data.tid);
 		topic.toggleClass('pinned', data.isPinned);
 		topic.find('[component="topic/pinned"]').toggleClass('hidden', !data.isPinned);

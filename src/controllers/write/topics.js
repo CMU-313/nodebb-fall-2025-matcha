@@ -79,6 +79,16 @@ Topics.unpin = async (req, res) => {
 	helpers.formatApiResponse(200, res);
 };
 
+Topics.private = async (req, res) => {
+	await api.topics.private(req, { tids: [req.params.tid] });
+	helpers.formatApiResponse(200, res);
+};
+
+Topics.unprivate = async (req, res) => {
+	await api.topics.unprivate(req, { tids: [req.params.tid] });
+	helpers.formatApiResponse(200, res);
+};
+
 Topics.lock = async (req, res) => {
 	await api.topics.lock(req, { tids: [req.params.tid] });
 	helpers.formatApiResponse(200, res);

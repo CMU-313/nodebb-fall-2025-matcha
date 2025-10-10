@@ -93,5 +93,5 @@ exports.post = async function (req, res) {
 		res.redirect(path);
 	} catch (err) {
 		helpers.noScriptErrors(req, res, err.message, 400);
-	}
+	}  
 };
