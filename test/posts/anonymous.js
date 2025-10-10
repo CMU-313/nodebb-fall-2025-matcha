@@ -8,6 +8,8 @@ const topics = require('../../src/topics');
 const posts = require('../../src/posts');
 const user = require('../../src/user');
 
+// file created with help of generative AI (cursor)
+
 describe('anonymous posts', () => {
 	let uid;
 	let cid;
@@ -104,6 +106,55 @@ describe('anonymous posts', () => {
 			const edited = data.posts.find(p => p.pid === postData.pid);
 			assert.strictEqual(edited.user.displayname, 'Anonymous');
 			assert.strictEqual(edited.content, 'edited content!');
+		});
+	});
+
+	describe('topics index listing', () => {
+		it('should only mask anonymous posts, not all posts by same user in index', async () => {
+			//create three posts by the same user: anonymous, non-anonymous, anonymous
+			const { topicData: topic1 } = await topics.post({
+				uid,
+				cid,
+				title: 'Anonymous Post 1',
+				content: 'anonymous content',
+				anonymous: 1,
+			});
+
+			const { topicData: topic2 } = await topics.post({
+				uid,
+				cid,
+				title: 'Non-Anonymous Post',
+				content: 'normal content',
+			});
+
+			const { topicData: topic3 } = await topics.post({
+				uid,
+				cid,
+				title: 'Anonymous Post 2',
+				content: 'another anonymous content',
+				anonymous: 1,
+			});
+
+			//get topics list
+			const tids = [topic1.tid, topic2.tid, topic3.tid];
+			const topicsList = await topics.getTopicsByTids(tids, uid);
+
+			//find each topic in the list
+			const listedTopic1 = topicsList.find(t => t.tid === topic1.tid);
+			const listedTopic2 = topicsList.find(t => t.tid === topic2.tid);
+			const listedTopic3 = topicsList.find(t => t.tid === topic3.tid);
+
+			//verify first anonymous post is masked
+			assert.strictEqual(listedTopic1.user.displayname, 'Anonymous');
+			assert.strictEqual(listedTopic1.user['icon:text'], 'A');
+
+			//verify non-anonymous post not masked
+			assert.notStrictEqual(listedTopic2.user.displayname, 'Anonymous');
+			assert.strictEqual(listedTopic2.uid, uid);
+
+			//verify second anonymous post also masked
+			assert.strictEqual(listedTopic3.user.displayname, 'Anonymous');
+			assert.strictEqual(listedTopic3.user['icon:text'], 'A');
 		});
 	});
 });
