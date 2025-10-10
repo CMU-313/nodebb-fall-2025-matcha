@@ -37,6 +37,8 @@ PostObject:
     timestampISO:
       type: string
       description: An ISO 8601 formatted date string (complementing `timestamp`)
+    anonymous:
+      type: number
     user:
       type: object
       properties:
