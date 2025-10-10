@@ -36,7 +36,10 @@ describe('anonymous posts', () => {
 	const getMainPost = (topicWithPosts) => topicWithPosts.posts[0];
 	const getPostByPid = (topicWithPosts, pid) => topicWithPosts.posts.find(p => p.pid === pid);
 	const expectMasked = (userObj) => {
+		assert.strictEqual(userObj.username, 'Anonymous');
 		assert.strictEqual(userObj.displayname, 'Anonymous');
+		assert.strictEqual(userObj.userslug, undefined);
+		assert.strictEqual(userObj.picture, undefined);
 		assert.strictEqual(userObj['icon:text'], 'A');
 		assert.strictEqual(userObj['icon:bgColor'], '#999999');
 	};
@@ -145,15 +148,22 @@ describe('anonymous posts', () => {
 			const listedTopic3 = topicsList.find(t => t.tid === topic3.tid);
 
 			//verify first anonymous post is masked
+			assert.strictEqual(listedTopic1.user.username, 'Anonymous');
 			assert.strictEqual(listedTopic1.user.displayname, 'Anonymous');
+			assert.strictEqual(listedTopic1.user.userslug, undefined);
+			assert.strictEqual(listedTopic1.user.picture, undefined);
 			assert.strictEqual(listedTopic1.user['icon:text'], 'A');
 
 			//verify non-anonymous post not masked
 			assert.notStrictEqual(listedTopic2.user.displayname, 'Anonymous');
+			assert.notStrictEqual(listedTopic2.user.userslug, undefined);
 			assert.strictEqual(listedTopic2.uid, uid);
 
 			//verify second anonymous post also masked
+			assert.strictEqual(listedTopic3.user.username, 'Anonymous');
 			assert.strictEqual(listedTopic3.user.displayname, 'Anonymous');
+			assert.strictEqual(listedTopic3.user.userslug, undefined);
+			assert.strictEqual(listedTopic3.user.picture, undefined);
 			assert.strictEqual(listedTopic3.user['icon:text'], 'A');
 		});
 	});

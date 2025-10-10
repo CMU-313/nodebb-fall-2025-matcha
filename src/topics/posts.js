@@ -144,13 +144,16 @@ module.exports = function (Topics) {
 				postObj.replies = replies[i];
 				postObj.selfPost = parseInt(uid, 10) > 0 && parseInt(uid, 10) === postObj.uid;
 
-				// case on whether the post is anonymous for what to display
-				if (postObj.anonymous === 1) {
-					postObj.user = postObj.user || {};
-					postObj.user.displayname = 'Anonymous';
-					postObj.user['icon:text'] = 'A'; // Display "A" instead of user initial
-					postObj.user['icon:bgColor'] = '#999999'; // Grey color for anonymous posts
-				}
+			// case on whether the post is anonymous for what to display
+			if (postObj.anonymous === 1) {
+				postObj.user = postObj.user || {};
+				postObj.user.username = 'Anonymous';
+				postObj.user.displayname = 'Anonymous';
+				postObj.user.userslug = undefined;
+				postObj.user.picture = undefined;
+				postObj.user['icon:text'] = 'A'; // Display "A" instead of user initial
+				postObj.user['icon:bgColor'] = '#999999'; // Grey color for anonymous posts
+			}
 
 				// Username override for guests, if enabled
 				if (meta.config.allowGuestHandles && postObj.uid === 0 && postObj.handle) {
