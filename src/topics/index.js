@@ -141,15 +141,15 @@ Topics.getTopicsByTids = async function (tids, options) {
 			topic.thumbs = result.thumbs[i];
 			topic.category = result.categoriesMap[topic.cid];
 			topic.user = topic.uid ? { ...result.usersMap[topic.uid] } : { ...result.usersMap[topic.uid] };
-		if (result.tidToMainPostAnonymous[topic.tid]) {
-			topic.user = topic.user || {};
-			topic.user.username = 'Anonymous';
-			topic.user.displayname = 'Anonymous';
-			topic.user.userslug = undefined;
-			topic.user.picture = undefined;
-			topic.user['icon:text'] = 'A'; // Display "A" instead of user initial
-			topic.user['icon:bgColor'] = '#999999'; // Grey color for anonymous posts
-		}
+			if (result.tidToMainPostAnonymous[topic.tid]) {
+				topic.user = topic.user || {};
+				topic.user.username = 'Anonymous';
+				topic.user.displayname = 'Anonymous';
+				topic.user.userslug = undefined;
+				topic.user.picture = undefined;
+				topic.user['icon:text'] = 'A'; // Display "A" instead of user initial
+				topic.user['icon:bgColor'] = '#999999'; // Grey color for anonymous posts
+			}
 			if (result.tidToGuestHandle[topic.tid]) {
 				topic.user.username = validator.escape(result.tidToGuestHandle[topic.tid]);
 				topic.user.displayname = topic.user.username;
