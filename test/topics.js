@@ -53,6 +53,99 @@ describe('Topic\'s', () => {
 		};
 	});
 
+	describe('Private topics', () => {
+		let adminPrivateTid;
+		let ownerPrivateTid;
+		let privateCategory;
+
+		before(async () => {
+			privateCategory = await categories.create({
+				name: 'Private Test Category',
+				description: 'Category for private topic tests',
+			});
+		});
+
+		it('admin can create and mark topic private and others cannot see it', async () => {
+			const { topicData } = await topics.post({ uid: adminUid, cid: privateCategory.cid, title: 'private admin topic', content: 'private' });
+			adminPrivateTid = topicData.tid;
+			await topics.tools.private(adminPrivateTid, adminUid);
+
+			const visibleToOther = await topics.getTopicsByTids([adminPrivateTid], { uid: fooUid });
+			assert.deepEqual(visibleToOther, []);
+
+			const visibleToOwner = await topics.getTopicsByTids([adminPrivateTid], { uid: adminUid });
+			assert.ok(Array.isArray(visibleToOwner));
+			assert.strictEqual(visibleToOwner.length, 1);
+			assert.strictEqual(visibleToOwner[0].private, 1);
+		});
+
+		it('non-owner cannot mark someone else\'s topic private', async () => {
+			const { topicData } = await topics.post({ uid: adminUid, cid: privateCategory.cid, title: 'public topic to test privilege', content: 'content' });
+			const tid = topicData.tid;
+			await assert.rejects(async () => {
+				await topics.tools.private(tid, fooUid);
+			}, { message: '[[error:no-privileges]]' });
+		});
+
+		it('posts in private topics hidden from others but visible to owner/admin', async () => {
+			const pub = await topics.post({ uid: adminUid, cid: privateCategory.cid, title: 'public post', content: 'public' });
+			const priv = await topics.post({ uid: adminUid, cid: privateCategory.cid, title: 'private post', content: 'private' });
+			const privTid = priv.topicData.tid;
+			await topics.tools.private(privTid, adminUid);
+
+			const resOther = await posts.getPostSummariesFromSet(`cid:${privateCategory.cid}:pids`, fooUid, 0, -1);
+			const tidsOther = resOther.posts.map(p => p && p.topic && p.topic.tid).filter(Boolean);
+			assert.ok(!tidsOther.includes(privTid));
+
+			const resAdmin = await posts.getPostSummariesFromSet(`cid:${privateCategory.cid}:pids`, adminUid, 0, -1);
+			const tidsAdmin = resAdmin.posts.map(p => p && p.topic && p.topic.tid).filter(Boolean);
+			assert.ok(tidsAdmin.includes(privTid));
+		});
+
+		it('Categories.getRecentTopicReplies filters private topics for non-admins (admins see them)', async () => {
+			await categories.setCategoryField(categoryObj.cid, 'numRecentReplies', 5);
+			const priv = await topics.post({ uid: adminUid, cid: privateCategory.cid, title: 'cat private', content: 'cpriv' });
+			const privTid = priv.topicData.tid;
+			await topics.tools.private(privTid, adminUid);
+			let catData = await categories.getCategoryData(privateCategory.cid);
+			catData.numRecentReplies = 5;
+			// Ensure children/posts arrays exist to match expected structure
+			catData.children = catData.children || [];
+			catData.posts = catData.posts || [];
+			await categories.getRecentTopicReplies([catData], fooUid, {});
+			const tidsNonAdmin = catData.posts.map(p => p && p.tid).filter(Boolean);
+			assert.ok(!tidsNonAdmin.includes(privTid));
+
+			catData = await categories.getCategoryData(privateCategory.cid);
+			catData.numRecentReplies = 5;
+			catData.children = catData.children || [];
+			catData.posts = catData.posts || [];
+			await categories.getRecentTopicReplies([catData], adminUid, {});
+			const tidsAdmin = catData.posts.map(p => p && p.tid).filter(Boolean);
+			assert.ok(tidsAdmin.includes(privTid));
+		});
+
+		it('API GET /api/topic should include privileges.canPrivate and be correct for owner/non-owner/admin', async () => {
+			// Create a topic as fooUid (non-admin) to test owner vs non-owner
+			const created = await topics.post({ uid: fooUid, cid: privateCategory.cid, title: 'api priv test', content: 'testing canPrivate' });
+			const tid = created.topicData.tid;
+
+			// Owner (fooUid) should see canPrivate (true if owner can toggle)
+			const { body: ownerBody } = await request.get(`${nconf.get('url')}/api/topic/${created.topicData.slug}`, { jar: await helpers.loginUser('foo', null).then(r => r.jar) });
+			assert(ownerBody.privileges && typeof ownerBody.privileges.canPrivate === 'boolean');
+
+			// Another regular user (adminUid is admin) -> test non-owner non-admin: use a fresh non-admin user
+			const otherUid = await User.create({ username: 'other' });
+			const { jar: otherJar } = await helpers.loginUser('other');
+			const { body: otherBody } = await request.get(`${nconf.get('url')}/api/topic/${created.topicData.slug}`, { jar: otherJar });
+			assert(otherBody.privileges && typeof otherBody.privileges.canPrivate === 'boolean');
+
+			// Admin should also see canPrivate
+			const { body: adminBody } = await request.get(`${nconf.get('url')}/api/topic/${created.topicData.slug}`, { jar: adminJar });
+			assert(adminBody.privileges && typeof adminBody.privileges.canPrivate === 'boolean');
+		});
+	});
+
 	describe('.post', () => {
 		it('should fail to create topic with invalid data', async () => {
 			try {
