@@ -10,8 +10,8 @@ const translatorApi = module.exports;
 translatorApi.translate = async function (postData) {
 	console.log(postData.content);
 	try {
-		const TRANSLATOR_API = '127.0.0.1:5000'; // TODO: Add the translator API URL
-		//const TRANSLATOR_API = 'http://17313-team04.s3d.cmu.edu:5000'; // TODO: Add the translator API URL
+
+		const TRANSLATOR_API = 'http://17313-team04.s3d.cmu.edu:5000';
 		const response = await fetch(TRANSLATOR_API + '/?content=' + postData.content);
 
 		const data = await response.json();
