@@ -11,14 +11,14 @@ translatorApi.translate = async function (postData) {
 	console.log(postData.content);
 	try {
 
-		const TRANSLATOR_API = 'http://17313-team04.s3d.cmu.edu:5000';
+		const TRANSLATOR_API = 'http://17313-team04.s3d.cmu.edu:5000';  
 		const response = await fetch(TRANSLATOR_API + '/?content=' + postData.content);
 
 		const data = await response.json();
 		return [data.is_english, data.translated_content];
 	} catch (error) {
 		console.error(error);
-		return [false, postData.content]; //[true, postData.content];
+		return [false, String(error)]; //[true, postData.content];
 	}
 };
 
