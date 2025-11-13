@@ -1,0 +1,18 @@
+{
+    "esversion": 6,
+    "node": true,
+    "browser": true,
+    "undef": true,
+    "unused": true,
+    "eqeqeq": true,
+    "curly": true,
+    "latedef": "nofunc",
+    "maxerr": 1000,
+    "globals": {
+      "require": true,
+      "module": true,
+      "__dirname": true,
+      "process": true
+    }
+  }
+  
